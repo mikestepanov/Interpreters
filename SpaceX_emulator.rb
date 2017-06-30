@@ -26,6 +26,7 @@ def label_registers
 end
 
 def move(registers, command)
+    mod = 2 ** 32
     command = command.split(" ")
     jump = nil
     case command.first
@@ -38,29 +39,25 @@ def move(registers, command)
             end
         when "ADD"
             loc = command.last.split(",")
-            sum = (registers[loc[1]] + registers[loc[0]]) % (2 ** 32)
+            sum = (registers[loc[1]] + registers[loc[0]]) % mod
             registers[loc[0]] = sum
         when "DEC"
             loc = command.last
             if registers[loc] > 0
                 registers[loc] -= 1
             else
-                registers[loc] = (2 ** 32) - 1
+                registers[loc] = mod - 1
             end
         when "INC"
             loc = command.last
-            if registers[loc] == (2 ** 32) - 1
+            if registers[loc] == mod - 1
                 registers[loc] = 0
             else
                 registers[loc] += 1
             end
         when "INV"
             loc = command.last
-            if registers[loc].zero?
-                registers[loc] = (2 ** 32) - 1
-            else
-                registers[loc] = ~ registers[loc]
-            end
+            registers[loc] = ~ registers[loc] + mod
         when "JMP"
             loc = command.last
             jump = loc.to_i
